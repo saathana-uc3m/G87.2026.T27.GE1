@@ -1,35 +1,41 @@
-import json
-from datetime import datetime
+'''Enterprise request logic'''
 
+import json
 
 class EnterpriseRequest:
-    def __init__(self, Cif,phOnE, ENAME):
-        self.__EnterpriseNAME = ENAME
-        self.__cIF = Cif
-        self.__pHONe = phOnE
-        justnow = datetime.utcnow()
-        self.__timeStamp = datetime.timestamp(justnow)
+    '''Enterprise request class'''
+    def __init__(self, cif, phone, e_name):
+        '''Initialize enterprise request class'''
+        self.__enterprise_name = e_name
+        self.__cif = cif
+        self.__phone = phone
 
     def __str__(self):
         return "Enterprise:" + json.dumps(self.__dict__)
 
     @property
-    def ENTERPRISE_CIF(self):
-        return self.__cIF
-    @ENTERPRISE_CIF.setter
-    def ENTERPRISE_CIF(self, value):
-        self.__cIF = value
+    def enterprise_cif(self):
+        '''get CIF value'''
+        return self.__cif
+    @enterprise_cif.setter
+    def enterprise_cif(self, value):
+        '''set CIF value'''
+        self.__cif = value
 
     @property
-    def PHONE_NUMBER(self):
-        return self.__pHONe
-    @PHONE_NUMBER.setter
-    def PHONE_NUMBER(self, value):
-        self.__pHONe = value
+    def phone_number(self):
+        '''get phone number'''
+        return self.__phone
+    @phone_number.setter
+    def phone_number(self, value):
+        '''set phone number'''
+        self.__phone = value
 
     @property
-    def ENTerprise_Name(self):
-        return self.__EnterpriseNAME
-    @ENTerprise_Name.setter
-    def ENTerprise_Name(self, value):
-        self.__EnterpriseNAME = value
+    def enterprise_name(self):
+        '''get enterprise name'''
+        return self.__enterprise_name
+    @enterprise_name.setter
+    def enterprise_name(self, value):
+        '''set enterprise name'''
+        self.__enterprise_name = value
