@@ -1,23 +1,35 @@
+"""
+This module contains the EnterpriseManager class which provides
+functionality for managing enterprise data and validating Spanish
+Tax Identification Numbers (CIF).
+"""
 import json
 from .EnterpriseManagementException import EnterpriseManagementException
 from .EnterpriseRequest import EnterpriseRequest
 
 class EnterpriseManager:
+    """
+    EnterpriseManager handles the business logic for enterprise
+    registration, including JSON data retrieval and CIF validation
+    based on the Spanish organization type rules.
+    """
     def __init__(self):
         pass
 
-    def ValidateCIF(self, CiF):
+    def ValidateCIF(self, cif):
         """
-        Validates the Spanish CIF (Tax Identification Number) based on
-        the organization type and control character calculation.
+            Validates a Spanish CIF code based on official organization rules.
+
+            :param CIF_VAL: A 9-character string representing the CIF to validate.
+            :return: True if the CIF follows the calculation rules, False otherwise.
         """
         # Basic format check: Must be 9 characters [cite: 23]
-        if not CiF or len(CiF) != 9:
+        if not cif or len(cif) != 9:
             return False
 
-        letter = CiF[0].upper()
-        block_of_numbers = CiF[1:8]
-        control_char = CiF[8].upper()
+        letter = cif[0].upper()
+        block_of_numbers = cif[1:8]
+        control_char = cif[8].upper()
 
         # Ensure the central body is 7 digits [cite: 26]
         if not block_of_numbers.isdigit():
@@ -58,25 +70,33 @@ class EnterpriseManager:
 
         return False
 
-    def ReadproductcodefromJSON(self, fi):
+    def ReadProductCodeFromJSON(self, fi):
+        """
+            Parses a JSON file to extract enterprise data and validate its CIF.
+
+            :param PATH: String representing the file system path to the JSON file.
+            :return: An EnterpriseRequest object containing the validated data.
+            :raises EnterpriseManagementException: If the file is invalid or
+                                                   validation fails.
+        """
         try:
             with open(fi, encoding="utf-8") as f:
-                DATA = json.load(f)
+                data = json.load(f)
         except FileNotFoundError as e:
             raise EnterpriseManagementException("Wrong file or file path") from e
         except json.JSONDecodeError as e:
             raise EnterpriseManagementException("Wrong JSON Format") from e
 
         try:
-            T_CIF = DATA["cif"]
-            T_PHONE = DATA["phone"]
-            E_NAME = DATA["enterprise_name"]
-            req = EnterpriseRequest(T_CIF, T_PHONE, E_NAME)
+            t_cif = data["cif"]
+            t_phone = data["phone"]
+            e_name = data["enterprise_name"]
+            req = EnterpriseRequest(t_cif, t_phone, e_name)
         except KeyError as e:
             raise EnterpriseManagementException("Invalid JSON Key") from e
 
         # Updated validation call and error message
-        if not self.ValidateCIF(T_CIF):
+        if not self.ValidateCIF(t_cif):
             raise EnterpriseManagementException("Invalid CIF format")
 
         return req
@@ -86,9 +106,9 @@ if __name__ == "__main__":
     manager = EnterpriseManager()
 
     # 1. Valid CIF Example (A58818501 from the problem statement) [cite: 47]
-    valid_cif = "A58818501"
-    print(f"Testing Valid CIF ({valid_cif}): {manager.ValidateCIF(valid_cif)}")
+    VALID_CIF = "A58818501"
+    print(f"Testing Valid CIF ({VALID_CIF}): {manager.ValidateCIF(VALID_CIF)}")
 
     # 2. Non-valid CIF Example
-    invalid_cif = "S1234567A"
-    print(f"Testing Invalid CIF ({invalid_cif}): {manager.ValidateCIF(invalid_cif)}")
+    INVALID_CIF = "S1234567A"
+    print(f"Testing Invalid CIF ({INVALID_CIF}): {manager.ValidateCIF(INVALID_CIF)}")
